@@ -1,2 +1,2 @@
-mockito
+mockito >= 1.0.0
 robotstatuschecker

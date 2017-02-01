@@ -2,6 +2,7 @@
 Documentation     Tests elements
 Test Setup        Go To Page "links.html"
 Resource          ../resource.robot
+Library           String
 
 *** Test Cases ***
 Get Elements
@@ -48,11 +49,25 @@ Get Element Attribute
     Should Be Equal    ${id}    some_id
     ${class}=    Get Element Attribute    second_div@class
     Should Be Equal    ${class}    Second Class
+    ${id}=    Get Element Attribute    link=Link with id    id
+    Should Be Equal    ${id}    some_id
+    ${element_by_dom}=    Get Webelement    dom=document.getElementsByTagName('a')[3]
+    ${id}=    Get Element Attribute    ${element_by_dom}    id
+    Should Be Equal    ${id}    some_id
+    ${second_div}=    Get Webelement    second_div
+    ${class}=    Get Element Attribute    ${second_div}    class
+    Should Be Equal    ${class}    Second Class
 
 Get Matching XPath Count
     [Documentation]    Get Matching XPath Count
     ${count}=    Get Matching XPath Count    //a
     Should Be Equal    ${count}    19
+    ${count}=    Get Matching XPath Count    //a    ${True}
+    Should Be Equal    ${count}    19
+    Should Be String    ${count}
+    ${count}=    Get Matching XPath Count    //a    ${False}
+    Should Be Equal    ${count}    ${19}
+    Should Not Be String    ${count}
     ${count}=    Get Matching XPath Count    //div[@id="first_div"]/a
     Should Be Equal    ${count}    2
 
