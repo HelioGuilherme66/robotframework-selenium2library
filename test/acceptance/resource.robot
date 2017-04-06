@@ -17,7 +17,7 @@ Open Browser To Start Page
     [Documentation]    This keyword also tests 'Set Selenium Speed' and 'Set Selenium Timeout'
     ...    against all reason.
     ${default speed}    ${default timeout}=    Open Browser To Start Page Without Testing Default Options
-    Should Be Equal    ${default speed}    0 seconds
+    Should Be Equal    ${default speed}    ${0.0}
     Should Be Equal    ${default timeout}    5 seconds
 
 Open Browser To Start Page Without Testing Default Options
@@ -69,4 +69,4 @@ Set ${level} Loglevel
 
 Verify Location Is "${relative url}"
     [Documentation]    Verifies location
-    Location Should Be    ${ROOT}/${relative url}
+    Wait Until Keyword Succeeds    5    1    Location Should Be    ${ROOT}/${relative url}

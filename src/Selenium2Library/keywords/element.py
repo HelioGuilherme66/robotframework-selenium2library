@@ -14,7 +14,7 @@ except NameError:
     basestring = (str,bytes)
 
 
-class _ElementKeywords(KeywordGroup):
+class ElementKeywords(KeywordGroup):
 
     def __init__(self):
         self._element_finder = ElementFinder()
