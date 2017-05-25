@@ -1,11 +1,8 @@
-from . import events
-from builtins import str
 from .browsercache import BrowserCache
 from .librarylistener import LibraryListener
 
 
 def escape_xpath_value(value):
-    value = str(value)
     if '"' in value and '\'' in value:
         parts_wo_apos = value.split('\'')
         return "concat('%s')" % "', \"'\", '".join(parts_wo_apos)

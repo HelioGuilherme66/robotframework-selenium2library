@@ -1,4 +1,2 @@
-future
-decorator >= 3.3.2
 selenium
 robotframework >= 2.6.0

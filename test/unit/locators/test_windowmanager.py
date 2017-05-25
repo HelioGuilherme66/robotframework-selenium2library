@@ -3,7 +3,7 @@ import uuid
 
 from mockito import mock, unstub
 
-from Selenium2Library.locators import WindowManager
+from Selenium2Library.locators.windowmanager import WindowManager
 
 
 class WindowManagerTests(unittest.TestCase):
@@ -311,7 +311,6 @@ class WindowManagerTests(unittest.TestCase):
     def _make_mock_browser(self, *window_specs):
         browser = mock()
         current_window = mock()
-        browser.window_handles = []
         browser.window_handles = []
         window_infos = {}
         for window_spec in window_specs:

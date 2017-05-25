@@ -6,6 +6,12 @@ except NameError:
     basestring = (str,bytes)
 
 
+try:
+    basestring
+except NameError:
+    basestring = str
+
+
 class CustomLocator(object):
 
     def __init__(self, name, finder):
