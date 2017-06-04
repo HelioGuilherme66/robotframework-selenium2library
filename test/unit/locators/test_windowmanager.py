@@ -3,7 +3,7 @@ import uuid
 
 from mockito import mock, unstub
 
-from Selenium2Library.locators import WindowManager
+from Selenium2Library.locators.windowmanager import WindowManager
 
 
 class WindowManagerTests(unittest.TestCase):
@@ -312,7 +312,6 @@ class WindowManagerTests(unittest.TestCase):
         browser = mock()
         current_window = mock()
         browser.window_handles = []
-        browser.window_handles = []
         window_infos = {}
         for window_spec in window_specs:
             handle = uuid.uuid4().hex
@@ -328,14 +327,16 @@ class WindowManagerTests(unittest.TestCase):
             ]
             window_infos[handle] = window_info
 
-        def switch_to_window(handle_):
+        def window(handle_):
             if handle_ in browser.window_handles:
                 browser.session_id = handle_
                 current_window.name = window_infos[handle_][1]
                 browser.current_window = current_window
                 browser.title = window_infos[handle_][2]
                 browser.current_url = window_infos[handle_][3]
-        browser.switch_to_window = switch_to_window
+        switch_to = mock()
+        switch_to.window = window
+        browser.switch_to = switch_to
 
         def execute_script(script):
             handle_ = browser.session_id

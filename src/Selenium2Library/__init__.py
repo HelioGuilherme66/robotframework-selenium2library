@@ -1,25 +1,25 @@
-from .keywords import *
+import warnings
+
+from .keywords import AlertKeywords
+from .keywords import BrowserManagementKeywords
+from .keywords import CookieKeywords
+from .keywords import ElementKeywords
+from .keywords import FormElementKeywords
+from .keywords import JavaScriptKeywords
+from .keywords import RunOnFailureKeywords
+from .keywords import ScreenshotKeywords
+from .keywords import SelectElementKeywords
+from .keywords import TableElementKeywords
+from .keywords import WaitingKeywords
+from .robotlibcore import DynamicCore
+from .utils import BrowserCache
 from .utils import LibraryListener
 from .version import VERSION
-
 
 __version__ = VERSION
 
 
-class Selenium2Library(
-    LoggingKeywords,
-    RunOnFailureKeywords,
-    BrowserManagementKeywords,
-    ElementKeywords,
-    TableElementKeywords,
-    FormElementKeywords,
-    SelectElementKeywords,
-    JavaScriptKeywords,
-    CookieKeywords,
-    ScreenshotKeywords,
-    WaitingKeywords,
-    AlertKeywords
-):
+class Selenium2Library(DynamicCore):
     """Selenium2Library is a web testing library for Robot Framework.
 
     This document is about using Selenium2Library. For information about
@@ -51,16 +51,23 @@ class Selenium2Library(
 
     *Using locators*
     ---------------
-    By default, when a locator value is provided, it is matched against the
-    key attributes of the particular element type. For example, `id` and
-    `name` are key attributes to all elements, and locating elements is easy
-    using just the `id` as a `locator`. For example:
+    The locator can be used in two ways. In explicit way, where the strategy
+    of the locator is defined as prefix in the locator or in implicit way,
+    where there strategy is determined from the locator.
 
-    | Click Element    my_element
+    The implicit way supports two strategies: `xpath` and matching against
+    `id` and `name` attributes. If locator starts with `//` or `(//` then
+    `xpath` strategy will be used. If locator does not start with `//` or
+    `(//`, then it is matched against the `id` and `name` key attributes of
+    elements. Example
 
-    It is also possible to specify the approach Selenium2Library should take
-    to find an element by specifying a lookup strategy with a locator
-    prefix. Supported strategies are:
+    | Click Element    my_element    # id and name attribute matching
+    | Click Element    //div         # xpath
+    | Click Element    (//div)[2]    # xpath
+
+    In the explicit way, it is possible to specify the approach
+    Selenium2Library should take to find an element by specifying a lookup
+    strategy with a locator prefix. Supported strategies are:
 
     | *Strategy* | *Example*                               | *Description*                                   |
     | identifier | Click Element `|` identifier=my_element | Matches by @id or @name attribute               |
@@ -85,7 +92,7 @@ class Selenium2Library(
     | Click Link    default=page?a=b
 
     Please note that jQuery is not provided by Selenium2Library
-    and if there is need to use jQuery locators, the system
+    and if there is need to use jQuery locators, the system 
     under test must provide the jQuery library.
 
     *Using webelements*
@@ -184,10 +191,57 @@ class Selenium2Library(
         | Library `|` Selenium2Library `|` implicit_wait=5 `|` run_on_failure=Log Source | # Sets default implicit_wait to 5 seconds and runs `Log Source` on failure |
         | Library `|` Selenium2Library `|` timeout=10      `|` run_on_failure=Nothing    | # Sets default timeout to 10 seconds and does nothing on failure           |
         """
-        for base in Selenium2Library.__bases__:
-            base.__init__(self)
+        self._run_on_failure_keyword = None
+        self._running_on_failure_routine = False
+        self._speed_in_secs = 0.0
+        self._timeout_in_secs = 5.0
+        self._implicit_wait_in_secs = 5.0
+        libraries = [
+            AlertKeywords(self),
+            BrowserManagementKeywords(self),
+            RunOnFailureKeywords(self),
+            ElementKeywords(self),
+            TableElementKeywords(self),
+            FormElementKeywords(self),
+            SelectElementKeywords(self),
+            JavaScriptKeywords(self),
+            CookieKeywords(self),
+            ScreenshotKeywords(self),
+            WaitingKeywords(self)
+        ]
+        self._browsers = BrowserCache()
+        DynamicCore.__init__(self, libraries)
         self.screenshot_root_directory = screenshot_root_directory
         self.set_selenium_timeout(timeout)
         self.set_selenium_implicit_wait(implicit_wait)
         self.register_keyword_to_run_on_failure(run_on_failure)
         self.ROBOT_LIBRARY_LISTENER = LibraryListener()
+
+    def run_keyword(self, name, args, kwargs):
+        try:
+            return DynamicCore.run_keyword(self, name, args, kwargs)
+        except Exception:
+            RunOnFailureKeywords(self).run_on_failure()
+            raise
+
+    def register_browser(self, browser, alias):
+        return self._browsers.register(browser, alias)
+
+    @property
+    def _browser(self):
+        """Current active browser"""
+        if not self._browsers.current:
+            raise RuntimeError('No browser is open')
+        return self._browsers.current
+
+    @property
+    def _cache(self):
+        warnings.warn('"Selenium2Library._cache" is deprecated, '
+                      'use public API instead.', DeprecationWarning)
+        return self._browsers
+
+    def _current_browser(self):
+        warnings.warn('"Selenium2Library._current_browser" is deprecated, '
+                      'use "Selenium2Library.browser" instead.',
+                      DeprecationWarning)
+        return self.browser
