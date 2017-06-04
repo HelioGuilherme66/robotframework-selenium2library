@@ -4,7 +4,7 @@ from Selenium2Library.base import LibraryComponent
 from Selenium2Library.robotlibcore import keyword
 
 
-class FormElementKeywords(LibraryComponent):
+class _FormElementKeywords(KeywordGroup):
 
     @keyword
     def submit_form(self, locator=None):

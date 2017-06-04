@@ -111,7 +111,7 @@ class AlertKeywords(LibraryComponent):
         dismissed by this keyword or another like `Get Alert Message`.
         """
         if accept:
-            return self._handle_alert(self.__ACCEPT_ALERT)
+            return self._handle_alert(self.ACCEPT_ALERT)
         else:
             return self._handle_alert()
 
