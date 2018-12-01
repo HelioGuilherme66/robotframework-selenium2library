@@ -12,15 +12,15 @@ jobs:
     matrix:
       Python27:
         browser: 'Ie'
-        robot.options: '--dotted'
+        robot.options: '--xunit results.xml --xunitskipnoncritical --dotted'
         python.version: '2.7'
       Python36:
         browser: 'Ie'
-        robot.options: '--dotted'
+        robot.options: '--xunit results.xml --xunitskipnoncritical --dotted'
         python.version: '3.6'
       Python37:
         browser: 'Ie'
-        robot.options: '--dotted'
+        robot.options: '--xunit results.xml --xunitskipnoncritical --dotted'
         python.version: '3.7'
     maxParallel: 3
 
@@ -39,7 +39,7 @@ jobs:
 
   - task: PublishTestResults@2
     inputs:
-      testResultsFiles: '**/atest/results/*
+      testResultsFiles: '**/atest/results/results.xml'
       testRunTitle: 'Python %PYTHON_VERSION%'
     condition: succeededOrFailed()
 
