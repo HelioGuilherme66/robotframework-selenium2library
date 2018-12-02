@@ -225,7 +225,7 @@ if __name__ == '__main__':
     if args.nounit:
         print('Not running unit tests.')
     else:
-        rc = subprocess.call([interpreter, UNIT_TEST_RUNNER])
+        rc = subprocess.call([interpreter, UNIT_TEST_RUNNER], shell=(os.name == 'nt'))
         if rc != 0:
             print('Not running acceptance test, because unit tests failed.')
             sys.exit(rc)
