@@ -2,6 +2,8 @@
 # Create and test a Python package on multiple Python versions.
 # Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
+#
+# See https://github.com/Microsoft/azure-pipelines-tasks/issues/8798 for the solution to download files
 
 jobs:
 
@@ -24,8 +26,28 @@ jobs:
         python.version: '3.7'
     maxParallel: 3
 
+  - task: PythonScript@0
+    inputs:
+      url: 'http://selenium-release.storage.googleapis.com/3.141/IEDriverServer_Win32_3.141.0.zip'
+      fileName: '$(Build.SourcesDirectory)IEDriverServer_Win32.zip'
+      scriptSource: 'inline'
+      script: from urllib.request import urlretrieve; urlretrieve('$(url)', '$(fileName)')
+      displayName: 'Get IeDriverServer'
+
+  - task: ExtractFiles@0
+    inputs:
+      archiveFilePatterns: '*.zip' 
+      destinationFolder: $(Build.SourcesDirectory)
+      #cleanDestinationFolder: true 
+      displayName: 'Extract IeDriverServer'
+    variables:
+      Path: $(Build.SourcesDirectory);$(Path)
+
   steps:
-  - task: UsePythonVersion@0
+  - script: echo Path is $(Path)
+
+  steps:      
+  - task: UsePythonVersion@1
     inputs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
