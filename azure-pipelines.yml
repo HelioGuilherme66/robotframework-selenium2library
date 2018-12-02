@@ -13,11 +13,11 @@ jobs:
   strategy:
     matrix:
       Python27:
-        browser: 'Ie'
+        browser: 'Chrome'
         robot.options: '--xunit results.xml --xunitskipnoncritical --dotted'
         python.version: '2.7'
       Python36:
-        browser: 'Ie'
+        browser: 'Firefox'
         robot.options: '--xunit results.xml --xunitskipnoncritical --dotted'
         python.version: '3.6'
       Python37:
@@ -27,22 +27,6 @@ jobs:
     maxParallel: 3
     
   steps:
-  - task: PythonScript@0
-    inputs:
-      url: 'http://selenium-release.storage.googleapis.com/3.141/IEDriverServer_Win32_3.141.0.zip'
-      fileName: '$(Build.SourcesDirectory)IEDriverServer_Win32.zip'
-      scriptSource: 'inline'
-      script: from urllib.request import urlretrieve; urlretrieve('$(url)', '$(fileName)')
-      displayName: 'Get IeDriverServer'
-
-  - task: ExtractFiles@0
-    inputs:
-      archiveFilePatterns: '*.zip' 
-      destinationFolder: $(Build.SourcesDirectory)
-      #cleanDestinationFolder: true 
-      displayName: 'Extract IeDriverServer'
-      Path: $(Build.SourcesDirectory);$(Path)
-
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(python.version)'
@@ -55,7 +39,7 @@ jobs:
       python atest/run.py $(browser) --interpreter python $(robot.options)
     displayName: 'acceptance tests'
 
-  - task: PublishTestResults@0
+  - task: PublishTestResults@2
     inputs:
       testResultsFiles: '**/atest/results/results.xml'
       testRunTitle: 'Python $(python.version)'
@@ -67,7 +51,7 @@ jobs:
     vmImage: 'vs2017-win2016'
 
   steps:
-  - task: UsePythonVersion@1
+  - task: UsePythonVersion@0
     inputs:
       versionSpec: '3.x'
       architecture: 'x64'
