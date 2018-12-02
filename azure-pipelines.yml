@@ -34,7 +34,7 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      python atest/run.py $(browser) --interpreter 'python$(python.version)' $(robot.options)
+      python atest/run.py $(browser) --interpreter python $(robot.options)
     displayName: 'acceptance tests'
 
   - task: PublishTestResults@2
