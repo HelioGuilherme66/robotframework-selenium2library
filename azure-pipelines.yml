@@ -25,7 +25,8 @@ jobs:
         robot.options: '--xunit results.xml --xunitskipnoncritical --dotted'
         python.version: '3.7'
     maxParallel: 3
-
+    
+  steps:
   - task: PythonScript@0
     inputs:
       url: 'http://selenium-release.storage.googleapis.com/3.141/IEDriverServer_Win32_3.141.0.zip'
@@ -40,14 +41,9 @@ jobs:
       destinationFolder: $(Build.SourcesDirectory)
       #cleanDestinationFolder: true 
       displayName: 'Extract IeDriverServer'
-    variables:
       Path: $(Build.SourcesDirectory);$(Path)
 
-  steps:
-  - script: echo Path is $(Path)
-
-  steps:      
-  - task: UsePythonVersion@1
+  - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
@@ -56,10 +52,10 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      python atest/run.py $(browser) --interpreter 'python$(python.version)' $(robot.options)
+      python atest/run.py $(browser) --interpreter python $(robot.options)
     displayName: 'acceptance tests'
 
-  - task: PublishTestResults@2
+  - task: PublishTestResults@0
     inputs:
       testResultsFiles: '**/atest/results/results.xml'
       testRunTitle: 'Python $(python.version)'
@@ -71,7 +67,7 @@ jobs:
     vmImage: 'vs2017-win2016'
 
   steps:
-  - task: UsePythonVersion@0
+  - task: UsePythonVersion@1
     inputs:
       versionSpec: '3.x'
       architecture: 'x64'
