@@ -13,15 +13,15 @@ jobs:
   strategy:
     matrix:
       Python27:
-        browser: 'Chrome'
+        browser: 'chrome'
         robot.options: '--xunit results.xml --xunitskipnoncritical --dotted'
         python.version: '2.7'
       Python36:
-        browser: 'Firefox'
+        browser: 'firefox'
         robot.options: '--xunit results.xml --xunitskipnoncritical --dotted'
         python.version: '3.6'
       Python37:
-        browser: 'Safari'
+        browser: 'chrome'
         robot.options: '--xunit results.xml --xunitskipnoncritical --dotted'
         python.version: '3.7'
     maxParallel: 3
@@ -32,7 +32,7 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
 
-  - script: python -m pip install --upgrade pip && pip install robotstatuschecker && pip install -r requirements-dev.txt
+  - script: python -m pip install --upgrade pip && pip install robotstatuschecker && pip install -r requirements-dev.txt && webdrivermanager $(browser)
     displayName: 'Install dependencies'
 
   - script: |
